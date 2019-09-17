@@ -12,14 +12,16 @@
 
 class BFS {
 public:
+    // Constructor
+    BFS();
 
     // Data Members
     bool goalFound;
-    std::queue <Board> openList;
-    std::vector< int( * )[20] > closedList;
+    std::queue<Board> openList;
+    std::vector<Board> closedList;
     std::vector<Board> trailOfBoards;
 
-    // General BFS functions
+    // General Functions
     int positionOfTile(int num, const Board &board);
 
     // Able to move tile functions
@@ -38,6 +40,9 @@ public:
     void moveDown(Board &board);
     void moveLeft(Board &board);
     void moveRight(Board &board);
+
+    // BFS Functions
+    void BreadthFirstSearch(Board &board);
 
 };
 

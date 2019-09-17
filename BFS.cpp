@@ -9,6 +9,38 @@
 
 using namespace std;
 
+/*
+ * Constructor
+ */
+
+BFS::BFS()
+{
+    /*
+     * For canMove and moveBoard
+     * 0 = Up
+     * 1 = Down
+     * 2 = Left
+     * 3 = Right
+     */
+
+    // Pointers to can move functions
+    canMove[0] = &BFS::canMoveUp;
+    canMove[1] = &BFS::canMoveDown;
+    canMove[2] = &BFS::canMoveLeft;
+    canMove[3] = &BFS::canMoveRight;
+
+    // Pointers to move functions
+    moveBoard[0] = &BFS::moveUp;
+    moveBoard[1] = &BFS::moveDown;
+    moveBoard[2] = &BFS::moveLeft;
+    moveBoard[3] = &BFS::moveRight;
+}
+
+
+/*
+ * General functions
+ */
+
 int BFS::positionOfTile(int num, const Board &board) {
     for (int i = 0; i < 20; ++i) {
         if (board.state[i] == num) {
@@ -17,6 +49,10 @@ int BFS::positionOfTile(int num, const Board &board) {
     }
     return -1;
 }
+
+/*
+ * Able to move tile functions
+ */
 
 bool BFS::canMoveUp(const Board &board) {
     return positionOfTile(0, board) >= 4;
@@ -33,6 +69,10 @@ bool BFS::canMoveLeft(const Board &board) {
 bool BFS::canMoveRight(const Board &board) {
     return (positionOfTile(0, board) % 4) != 3;
 }
+
+/*
+ * Move tile functions
+ */
 
 void BFS::moveTile(int pos0, int pos1, Board &board) {
     int hold = board.state[pos0];
@@ -54,6 +94,15 @@ void BFS::moveLeft(Board &board) {
 
 void BFS::moveRight(Board &board) {
     moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
+}
+
+
+/*
+ * BFS functions
+ */
+
+void BFS::BreadthFirstSearch(Board &board) {
+    return;
 }
 
 
