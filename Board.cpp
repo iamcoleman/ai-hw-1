@@ -4,23 +4,40 @@
 
 #include <iostream>
 #include "Board.h"
-#include "BFS.h"
 
 using namespace std;
 
 // Parametrized Constructor
-Board::Board(const int *s, const int *g, Board *p) {
-    // set parent ID
-    parent = p;
-
-    // set current state
+Board::Board(const int *s, const int *g) {
+    // set current state and goal state
     for (int i = 0; i < 20; ++i) {
         state[i] = s[i];
+        goalState[i] = g[i];
     }
 
-    // set goal state
-    for (int j = 0; j < 20; ++j) {
-        goalState[j] = g[j];
+    // set parent
+    parent = nullptr;
+
+    // set children
+    for (int j = 0; j < 4; ++j) {
+        child[j] = nullptr;
+    }
+}
+
+// Copy Constructor
+Board::Board(const Board &other) {
+    // set current state and goal state
+    for (int i = 0; i < 20; ++i) {
+        state[i] = other.state[i];
+        goalState[i] = other.goalState[i];
+    }
+
+    // set parent
+    parent = nullptr;
+
+    // set children
+    for (int j = 0; j < 4; ++j) {
+        child[j] = nullptr;
     }
 }
 
@@ -75,31 +92,6 @@ void Board::printGoalStateFancy() {
             cout << endl;
         }
     }
-}
-
-
-/*
- * Getters
- */
-
-int Board::getId() {
-    return id;
-}
-
-Board* Board::getParent() {
-    return parent;
-}
-
-int* Board::getState() {
-    return state;
-}
-
-int* Board::getGoalState() {
-    return goalState;
-}
-
-int Board::get_f_of_n() {
-    return f_of_n;
 }
 
 
