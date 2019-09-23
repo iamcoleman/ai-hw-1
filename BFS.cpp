@@ -94,26 +94,29 @@ bool BFS::canMoveRight(const Board &board) {
  * Move tile functions
  */
 
-void BFS::moveTile(int pos0, int pos1, Board &board) {
-    int hold = board.state[pos0];
+int BFS::moveTile(int pos0, int pos1, Board &board) {
+    // pos0 = index of 0 (blank)
+    // pos1 = index of tile
+    int tileNumber = board.state[pos1];
     board.state[pos0] = board.state[pos1];
-    board.state[pos1] = hold;
+    board.state[pos1] = 0;
+    return tileNumber;
 }
 
-void BFS::moveUp(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
+int BFS::moveUp(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
 }
 
-void BFS::moveDown(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
+int BFS::moveDown(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
 }
 
-void BFS::moveLeft(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
+int BFS::moveLeft(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
 }
 
-void BFS::moveRight(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
+int BFS::moveRight(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
 }
 
 
@@ -124,7 +127,7 @@ void BFS::moveRight(Board &board) {
 void BFS::BreadthFirstSearch(Board *board) {
     // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
-    setFunctionValues(board);
+    setFunctionValues(board, 0);
     openListTotalAdds++;
 
     // do while goal state hasn't been found
@@ -169,14 +172,14 @@ void BFS::CreateChildren(Board *board) {
                 // create the child (copy of parent)
                 board->child[i] = new Board(*board);
 
-                // move the tile
-                (this->*moveBoard[i])(*board->child[i]);
+                // move the tile and get the tile number that moved
+                int tileMoved = (this->*moveBoard[i])(*board->child[i]);
 
                 // set the parent
                 board->child[i]->parent = board;
 
                 // set function values
-                setFunctionValues(board->child[i]);
+                setFunctionValues(board->child[i], tileMoved);
 
                 // check if child is in closed list
                 if (isBoardInClosedList(board->child[i])) {
@@ -193,10 +196,18 @@ void BFS::CreateChildren(Board *board) {
     }
 }
 
-void BFS::setFunctionValues(Board *board) {
-    board->g_of_n = 1;
+void BFS::setFunctionValues(Board *board, int tileNumber) {
+    // set g_of_n (the path cost) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
+    if (tileNumber >= 10) {
+        board->g_of_n = 2;
+    } else if (tileNumber >= 1) {
+        board->g_of_n = 1;
+    } else {
+        board->g_of_n = 0;
+    }
+
     board->h_of_n = 0;
-    board->f_of_n = 1;
+    board->f_of_n = board->g_of_n + board->h_of_n;
     board->priorityValue = 1;
 }
 

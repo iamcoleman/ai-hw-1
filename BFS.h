@@ -37,18 +37,18 @@ public:
     bool canMoveRight(const Board &board);
 
     // Move tile functions
-    typedef void (BFS::*movePtr)(Board &board);
+    typedef int (BFS::*movePtr)(Board &board);
     movePtr moveBoard[4];
-    void moveTile(int pos0, int pos1, Board &board);
-    void moveUp(Board &board);
-    void moveDown(Board &board);
-    void moveLeft(Board &board);
-    void moveRight(Board &board);
+    int moveTile(int pos0, int pos1, Board &board);
+    int moveUp(Board &board);
+    int moveDown(Board &board);
+    int moveLeft(Board &board);
+    int moveRight(Board &board);
 
     // BFS Functions
     void BreadthFirstSearch(Board *board);
     void CreateChildren(Board *board);
-    void setFunctionValues(Board *board);
+    void setFunctionValues(Board *board, int tileNumber);
     void CreateBoardTrail(Board *board);
     void PrintBoardTrail();
 
