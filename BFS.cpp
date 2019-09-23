@@ -10,6 +10,10 @@
 
 using namespace std;
 
+// static ints
+int BFS::openListTotalAdds = 0;
+int BFS::closedListTotalAdds = 0;
+
 /*
  * Constructor
  */
@@ -119,25 +123,25 @@ void BFS::moveRight(Board &board) {
  */
 
 void BFS::BreadthFirstSearch(Board *board) {
-    // add starting board to open list
+    // add starting board to open list and increment total adds
     openList.push_back(board);
+    openListTotalAdds++;
 
     // do while goal state hasn't been found
     while (!goalFound) {
 
         // check if board is goal state
         if (openList.front()->isGoalState()) {
-            // goal state
+            // goal state found
             goalFound = true;
 
-            cout << endl << "Goal State Found!" << endl;
-
-            // create string of parents
+            // create string of boards that found the solution
             CreateBoardTrail(openList.front());
             PrintBoardTrail();
         } else {
-            // add first board in the queue to the closed list
+            // add first board in the queue to the closed list and increment total adds
             closedList.push_back(openList.front());
+            closedListTotalAdds++;
 
             // expand the first board in the queue
             CreateChildren(openList.front());
@@ -167,12 +171,13 @@ void BFS::CreateChildren(Board *board) {
 
                 // check if child is in closed list
                 if (isBoardInClosedList(board->child[i])) {
-                    // delete child
+                    // delete child if already exists in closed list
                     delete board->child[i];
                     board->child[i] = nullptr;
                 } else {
-                    // add child board to open list
+                    // add child board to open list and increment total adds
                     openList.push_back(board->child[i]);
+                    openListTotalAdds++;
                 }
             }
         }
@@ -185,10 +190,14 @@ void BFS::CreateBoardTrail(Board *board) {
         trailOfBoards.insert(trailOfBoards.begin(), boardPtr);
         boardPtr = boardPtr->parent;
     }
-    cout << "Trail Size: " << trailOfBoards.size() << endl;
 }
 
 void BFS::PrintBoardTrail() {
+    cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
+    cout << "-- Length of path: " << trailOfBoards.size() << endl;
+    cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;
+    cout << "-- Number of boards added to Closed List: " << closedListTotalAdds << endl << endl;
+
     for (auto & board : trailOfBoards) {
         board->printStateFancy();
     }

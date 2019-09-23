@@ -19,7 +19,9 @@ public:
     // Data Members
     bool goalFound;
     std::list<Board*> openList;
+    static int openListTotalAdds;
     std::vector<Board*> closedList;
+    static int closedListTotalAdds;
     std::vector<Board*> trailOfBoards;
 
     // General Functions
