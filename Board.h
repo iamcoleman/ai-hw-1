@@ -8,7 +8,8 @@
 
 class Board {
 public:
-    //int id;             // id of board
+    static int nextid;  // id of the next board
+    int id;             // id of board
     Board* parent;      // parent board
     Board* child[4];    // children boards
     int state[20];      // state of board
@@ -19,7 +20,6 @@ public:
 
     Board(const int s[20], const int g[20]);   // Constructor
     Board(const Board &other);                 // Copy Constructor
-    Board& operator =(const Board& other);     // Copy Assignment
     void printStateFancy();                    // print the current state ~fancy~
     void printGoalStateFancy();                // print the goal state ~fancy~
 

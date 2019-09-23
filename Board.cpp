@@ -7,8 +7,15 @@
 
 using namespace std;
 
+// static nextid
+int Board::nextid = 1;
+
 // Parametrized Constructor
 Board::Board(const int *s, const int *g) {
+    // set the id and increment the nextid
+    id = nextid;
+    ++nextid;
+
     // set current state and goal state
     for (int i = 0; i < 20; ++i) {
         state[i] = s[i];
@@ -26,6 +33,10 @@ Board::Board(const int *s, const int *g) {
 
 // Copy Constructor
 Board::Board(const Board &other) {
+    // set the id and increment the nextid
+    id = nextid;
+    ++nextid;
+
     // set current state and goal state
     for (int i = 0; i < 20; ++i) {
         state[i] = other.state[i];
@@ -38,23 +49,6 @@ Board::Board(const Board &other) {
     // set children to nullptr
     for (int j = 0; j < 4; ++j) {
         child[j] = nullptr;
-    }
-}
-
-// Copy Assignment
-Board &Board::operator=(const Board &other) {
-    // set current state and goal state
-    for (int i = 0; i < 20; ++i) {
-        state[i] = other.state[i];
-        goalState[i] = other.goalState[i];
-    }
-
-    // set parent to nullptr
-    parent = other.parent;
-
-    // set children to nullptr
-    for (int j = 0; j < 4; ++j) {
-        child[j] = other.child[j];
     }
 }
 
@@ -82,7 +76,7 @@ bool operator!=(const Board &first, const Board &second) {
 }
 
 void Board::printStateFancy() {
-    cout << "--- State ---" << endl;
+    cout << "--- State for board " << id << " ---" << endl;
     for (int i = 0; i < 20; ++i) {
         if (state[i] < 10) {
             cout << state[i] << "   ";
