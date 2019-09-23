@@ -129,6 +129,12 @@ void BFS::BreadthFirstSearch(Board *board) {
 
     // do while goal state hasn't been found
     while (!goalFound) {
+        // terminate search after 50,000 states have been explored and no solution has been found
+        if (closedListTotalAdds >= 50000) {
+            cout << "Terminating Search" << endl;
+            cout << "After 50,000 explored states, no goal state was found" << endl;
+            return;
+        }
 
         // check if board is goal state
         if (openList.front()->isGoalState()) {
