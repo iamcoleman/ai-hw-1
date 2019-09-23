@@ -7,12 +7,8 @@
 
 using namespace std;
 
-// setting static members
+// set static nextid
 int Board::nextid = 1;
-int Board::g_of_n = 1;
-int Board::h_of_n = 0;
-int Board::f_of_n = 1;
-int Board::priorityValue = 1;
 
 // Parametrized Constructor
 Board::Board(const int *s, const int *g) {

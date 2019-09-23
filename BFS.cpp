@@ -2,7 +2,6 @@
 // Created by Coleman on 9/17/2019.
 //
 
-#include <queue>
 #include <vector>
 #include <iostream>
 
@@ -123,8 +122,9 @@ void BFS::moveRight(Board &board) {
  */
 
 void BFS::BreadthFirstSearch(Board *board) {
-    // add starting board to open list and increment total adds
+    // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
+    setFunctionValues(board);
     openListTotalAdds++;
 
     // do while goal state hasn't been found
@@ -175,6 +175,9 @@ void BFS::CreateChildren(Board *board) {
                 // set the parent
                 board->child[i]->parent = board;
 
+                // set function values
+                setFunctionValues(board->child[i]);
+
                 // check if child is in closed list
                 if (isBoardInClosedList(board->child[i])) {
                     // delete child if already exists in closed list
@@ -188,6 +191,13 @@ void BFS::CreateChildren(Board *board) {
             }
         }
     }
+}
+
+void BFS::setFunctionValues(Board *board) {
+    board->g_of_n = 1;
+    board->h_of_n = 0;
+    board->f_of_n = 1;
+    board->priorityValue = 1;
 }
 
 void BFS::CreateBoardTrail(Board *board) {
