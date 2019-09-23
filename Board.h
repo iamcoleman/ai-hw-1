@@ -19,12 +19,14 @@ public:
 
     Board(const int s[20], const int g[20]);   // Constructor
     Board(const Board &other);                 // Copy Constructor
+    Board& operator =(const Board& other);     // Copy Assignment
     void printStateFancy();                    // print the current state ~fancy~
     void printGoalStateFancy();                // print the goal state ~fancy~
 
     // Operators
     friend bool operator ==(const Board& first, const Board& second);
     friend bool operator !=(const Board& first, const Board& second);
+
 
     // Computations
     bool isGoalState();

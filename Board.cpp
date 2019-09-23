@@ -32,12 +32,29 @@ Board::Board(const Board &other) {
         goalState[i] = other.goalState[i];
     }
 
-    // set parent
+    // set parent to nullptr
     parent = nullptr;
 
-    // set children
+    // set children to nullptr
     for (int j = 0; j < 4; ++j) {
         child[j] = nullptr;
+    }
+}
+
+// Copy Assignment
+Board &Board::operator=(const Board &other) {
+    // set current state and goal state
+    for (int i = 0; i < 20; ++i) {
+        state[i] = other.state[i];
+        goalState[i] = other.goalState[i];
+    }
+
+    // set parent to nullptr
+    parent = other.parent;
+
+    // set children to nullptr
+    for (int j = 0; j < 4; ++j) {
+        child[j] = other.child[j];
     }
 }
 

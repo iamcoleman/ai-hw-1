@@ -53,9 +53,9 @@ int BFS::positionOfTile(int num, const Board &board) {
     return -1;
 }
 
-bool BFS::isBoardInClosedList(Board &board) {
+bool BFS::isBoardInClosedList(Board *board) {
     for (vector<Board>::size_type i = 0; i != closedList.size(); i++) {
-        if (closedList[i] == board) {
+        if (*closedList[i] == *board) {
             return true;
         }
     }
@@ -118,25 +118,26 @@ void BFS::moveRight(Board &board) {
  * BFS functions
  */
 
-void BFS::BreadthFirstSearch(Board &board) {
+void BFS::BreadthFirstSearch(Board *board) {
     // add starting board to open list
     openList.push_back(board);
 
     // do while goal state hasn't been found
     while (!goalFound) {
-        // testing - print state
-        //openList.front().printStateFancy();
 
         // check if board is goal state
-        if (openList.front().isGoalState()) {
+        if (openList.front()->isGoalState()) {
             // goal state
             goalFound = true;
+
             cout << endl << "Goal State Found!" << endl;
-            openList.front().printStateFancy();
+
             // create string of parents
+            CreateBoardTrail(openList.front());
+            PrintBoardTrail();
         } else {
             // add first board in the queue to the closed list
-            closedList.push_back(board);
+            closedList.push_back(openList.front());
 
             // expand the first board in the queue
             CreateChildren(openList.front());
@@ -147,33 +148,48 @@ void BFS::BreadthFirstSearch(Board &board) {
     }
 }
 
-void BFS::CreateChildren(Board &board) {
+void BFS::CreateChildren(Board *board) {
     // check all four directions and create children boards
     for (int i = 0; i < 4; ++i) {
-        if ((this->*canMove[i])(board)) {
+        if ((this->*canMove[i])(*board)) {
 
             // create child for tile change
-            if (board.child[i] == nullptr) {
+            if (board->child[i] == nullptr) {
 
                 // create the child (copy of parent)
-                board.child[i] = new Board(board);
+                board->child[i] = new Board(*board);
 
                 // move the tile
-                (this->*moveBoard[i])(*board.child[i]);
+                (this->*moveBoard[i])(*board->child[i]);
 
                 // set the parent
-                board.child[i]->parent = &board;
+                board->child[i]->parent = board;
 
                 // check if child is in closed list
-                if (isBoardInClosedList(*board.child[i])) {
+                if (isBoardInClosedList(board->child[i])) {
                     // delete child
-                    delete board.child[i];
-                    board.child[i] = nullptr;
+                    delete board->child[i];
+                    board->child[i] = nullptr;
                 } else {
                     // add child board to open list
-                    openList.push_back(*board.child[i]);
+                    openList.push_back(board->child[i]);
                 }
             }
         }
+    }
+}
+
+void BFS::CreateBoardTrail(Board *board) {
+    Board* boardPtr = board;
+    while (boardPtr) {
+        trailOfBoards.insert(trailOfBoards.begin(), boardPtr);
+        boardPtr = boardPtr->parent;
+    }
+    cout << "Trail Size: " << trailOfBoards.size() << endl;
+}
+
+void BFS::PrintBoardTrail() {
+    for (auto & board : trailOfBoards) {
+        board->printStateFancy();
     }
 }

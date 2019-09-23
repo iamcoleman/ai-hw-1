@@ -18,13 +18,13 @@ public:
 
     // Data Members
     bool goalFound;
-    std::list<Board> openList;
-    std::vector<Board> closedList;
-    std::vector<Board> trailOfBoards;
+    std::list<Board*> openList;
+    std::vector<Board*> closedList;
+    std::vector<Board*> trailOfBoards;
 
     // General Functions
     int positionOfTile(int num, const Board &board);
-    bool isBoardInClosedList(Board &board);
+    bool isBoardInClosedList(Board *board);
 
     // Able to move tile functions
     typedef bool (BFS::*canMovePtr)(const Board &board);
@@ -44,8 +44,10 @@ public:
     void moveRight(Board &board);
 
     // BFS Functions
-    void BreadthFirstSearch(Board &board);
-    void CreateChildren(Board &board);
+    void BreadthFirstSearch(Board *board);
+    void CreateChildren(Board *board);
+    void CreateBoardTrail(Board *board);
+    void PrintBoardTrail();
 
 };
 
