@@ -124,7 +124,7 @@ int BFS::moveRight(Board &board) {
  * BFS functions
  */
 
-void BFS::BreadthFirstSearch(Board *board) {
+void BFS::breadthFirstSearch(Board *board) {
     // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
     setFunctionValues(board, 0);
@@ -145,15 +145,15 @@ void BFS::BreadthFirstSearch(Board *board) {
             goalFound = true;
 
             // create string of boards that found the solution
-            CreateBoardTrail(openList.front());
-            PrintBoardTrail();
+            createBoardTrail(openList.front());
+            printBoardTrail();
         } else {
             // add first board in the queue to the closed list and increment total adds
             closedList.push_back(openList.front());
             closedListTotalAdds++;
 
             // expand the first board in the queue
-            CreateChildren(openList.front());
+            createChildren(openList.front());
 
             // pop the first board in the queue
             openList.pop_front();
@@ -161,7 +161,7 @@ void BFS::BreadthFirstSearch(Board *board) {
     }
 }
 
-void BFS::CreateChildren(Board *board) {
+void BFS::createChildren(Board *board) {
     // check all four directions and create children boards
     for (int i = 0; i < 4; ++i) {
         if ((this->*canMove[i])(*board)) {
@@ -197,7 +197,7 @@ void BFS::CreateChildren(Board *board) {
 }
 
 void BFS::setFunctionValues(Board *board, int tileNumber) {
-    // set g_of_n (the path cost) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
+    // set g_of_n (the cost of making a move) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
     if (tileNumber >= 10) {
         board->g_of_n = 2;
     } else if (tileNumber >= 1) {
@@ -211,7 +211,7 @@ void BFS::setFunctionValues(Board *board, int tileNumber) {
     board->priorityValue = 1;
 }
 
-void BFS::CreateBoardTrail(Board *board) {
+void BFS::createBoardTrail(Board *board) {
     Board* boardPtr = board;
     while (boardPtr) {
         trailOfBoards.insert(trailOfBoards.begin(), boardPtr);
@@ -219,7 +219,7 @@ void BFS::CreateBoardTrail(Board *board) {
     }
 }
 
-void BFS::PrintBoardTrail() {
+void BFS::printBoardTrail() {
     cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
     cout << "-- Length of path: " << trailOfBoards.size() << endl;
     cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;

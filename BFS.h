@@ -46,11 +46,11 @@ public:
     int moveRight(Board &board);
 
     // BFS Functions
-    void BreadthFirstSearch(Board *board);
-    void CreateChildren(Board *board);
+    void breadthFirstSearch(Board *board);
+    void createChildren(Board *board);
     void setFunctionValues(Board *board, int tileNumber);
-    void CreateBoardTrail(Board *board);
-    void PrintBoardTrail();
+    void createBoardTrail(Board *board);
+    void printBoardTrail();
 
 };
 

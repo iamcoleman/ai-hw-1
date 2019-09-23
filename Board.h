@@ -14,7 +14,7 @@ public:
     Board* child[4];    // children boards
     int state[20];      // state of board
     int goalState[20];  // goal state
-    int g_of_n;         // g(n) = path cost
+    int g_of_n;         // g(n) = the cost of making a move
     int h_of_n;         // h(n) = heuristic cost
     int f_of_n;         // f(n) = g(n) + h(n)
     int priorityValue;  // priority value

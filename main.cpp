@@ -22,10 +22,12 @@ int main() {
     Board testBoard(startArray4, goalArray);
 
     // Breadth First Search
-    BFS bfs;
-    bfs.BreadthFirstSearch(&testBoard);
+//    BFS bfs;
+//    bfs.breadthFirstSearch(&testBoard);
 
     // A* Search with Heuristic 1
+    A_Star_1 as1;
+    as1.aStarSearch(&testBoard);
 
     return 0;
 }

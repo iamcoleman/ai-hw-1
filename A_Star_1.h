@@ -13,6 +13,7 @@
 
 
 class A_Star_1 {
+public:
     // Constructor
     A_Star_1();
 
@@ -37,15 +38,22 @@ class A_Star_1 {
     bool canMoveRight(const Board &board);
 
     // Move tile functions
-    typedef void (A_Star_1::*movePtr)(Board &board);
+    typedef int (A_Star_1::*movePtr)(Board &board);
     movePtr moveBoard[4];
-    void moveTile(int pos0, int pos1, Board &board);
-    void moveUp(Board &board);
-    void moveDown(Board &board);
-    void moveLeft(Board &board);
-    void moveRight(Board &board);
+    int moveTile(int pos0, int pos1, Board &board);
+    int moveUp(Board &board);
+    int moveDown(Board &board);
+    int moveLeft(Board &board);
+    int moveRight(Board &board);
 
     // A* functions
+    void aStarSearch(Board *board);
+    void createChildren(Board *board);
+    void setFunctionValues(Board *board, int tileNumber);
+    int getHeuristicScore(Board *board);
+    void insertBoardToPriorityQueue(Board *board);
+    void createBoardTrail(Board *board);
+    void printBoardTrail();
 };
 
 

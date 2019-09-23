@@ -91,26 +91,177 @@ bool A_Star_1::canMoveRight(const Board &board) {
 /*
  * Move tile functions
  */
-void A_Star_1::moveTile(int pos0, int pos1, Board &board) {
-    int hold = board.state[pos0];
+int A_Star_1::moveTile(int pos0, int pos1, Board &board) {
+    // pos0 = index of 0 (blank)
+    // pos1 = index of tile
+    int tileNumber = board.state[pos1];
     board.state[pos0] = board.state[pos1];
-    board.state[pos1] = hold;
+    board.state[pos1] = 0;
+    return tileNumber;
 }
 
-void A_Star_1::moveUp(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
+int A_Star_1::moveUp(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
 }
 
-void A_Star_1::moveDown(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
+int A_Star_1::moveDown(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
 }
 
-void A_Star_1::moveLeft(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
+int A_Star_1::moveLeft(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
 }
 
-void A_Star_1::moveRight(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
+int A_Star_1::moveRight(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
 }
 
 
+/*
+ * A* Functions
+ */
+void A_Star_1::aStarSearch(Board *board) {
+    // add starting board to open list, set initial function values, and increment total adds
+    openList.push_back(board);
+    setFunctionValues(board, 0);
+    openListTotalAdds++;
+
+    // do while a goal state hasn't been found
+    while (!goalFound) {
+        // terminate search after 50,000 states have been explored and no solution has been found
+        if (closedListTotalAdds >= 50000) {
+            cout << "Terminating Search" << endl;
+            cout << "After 50,000 explored states, no goal state was found" << endl << endl;
+            return;
+        }
+
+        // check if board is goal state
+        if (openList.front()->isGoalState()) {
+            // goal state found
+            goalFound = true;
+
+            // create string of boards that found the solution
+            createBoardTrail(openList.front());
+            printBoardTrail();
+        } else {
+            // add first board in the queue to the closed list and increment total adds
+            closedList.push_back(openList.front());
+            closedListTotalAdds++;
+
+            // expand the first board in the queue
+            createChildren(openList.front());
+
+            // pop the first board in the queue
+            openList.pop_front();
+        }
+    }
+}
+
+void A_Star_1::createChildren(Board *board) {
+    // check all four directions and create children boards
+    for (int i = 0; i < 4; ++i) {
+        if ((this->*canMove[i])(*board)) {
+
+            // create child for tile change
+            if (board->child[i] == nullptr) {
+
+                // create the child (copy of parent)
+                board->child[i] = new Board(*board);
+
+                // move the tile and record the tile number that moved
+                int tileMoved = (this->*moveBoard[i])(*board->child[i]);
+
+                // set the parent
+                board->child[i]->parent = board;
+
+                // set function values
+                setFunctionValues(board->child[i], tileMoved);
+
+                // check if child is in closed list
+                if (isBoardInClosedList(board->child[i])) {
+                    // delete child if already exists in closed list
+                    delete board->child[i];
+                    board->child[i] = nullptr;
+                } else {
+                    // add child board to open list and increment total adds
+                    insertBoardToPriorityQueue(board->child[i]);
+                    openListTotalAdds++;
+                }
+            }
+        }
+    }
+}
+
+void A_Star_1::setFunctionValues(Board *board, int tileNumber) {
+    // set g_of_n (the cost of making a move) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
+    if (tileNumber >= 10) {
+        board->g_of_n = 2;
+    } else if (tileNumber >= 1) {
+        board->g_of_n = 1;
+    } else {
+        board->g_of_n = 0;
+    }
+
+    // set h_of_n (heuristic score)
+    board->h_of_n = getHeuristicScore(board);
+
+    // set f_of_n (path cost + heuristic score)
+    board->f_of_n = board->g_of_n + board->h_of_n;
+
+    // set priority value
+    board->priorityValue = 1;
+}
+
+int A_Star_1::getHeuristicScore(Board *board) {
+    cout << "get heuristic score" << endl;
+    // Estimated cost of taking this board B to the goal state G is equal to the number of tiles in B
+    // that are not in the correct location as required by G
+    int score = 20;
+    for (int i = 0; i < 20; ++i) {
+        if (board->state[i] == board->goalState[i]) {
+            score--;
+        }
+    }
+    return score;
+}
+
+void A_Star_1::insertBoardToPriorityQueue(Board *board) {
+    cout << "Insert board into priority queue" << endl;
+    list<Board*>::iterator boardInList;
+
+    // check if state already exists in open list
+    for (boardInList = openList.begin(); boardInList != openList.end(); boardInList++) {
+        (**boardInList).printStateFancy();
+        if ((**boardInList) == (*board)) {
+            // replace accordingly
+            cout << "Board exists in open list" << endl;
+        }
+    }
+
+    // insert board into list based on f_of_n
+    for (boardInList = openList.begin(); boardInList != openList.end(); boardInList++) {
+        if ((*board).f_of_n < (**boardInList).f_of_n) {
+            openList.insert(boardInList, board);
+            break;
+        }
+    }
+}
+
+void A_Star_1::createBoardTrail(Board *board) {
+    Board* boardPtr = board;
+    while (boardPtr) {
+        trailOfBoards.insert(trailOfBoards.begin(), boardPtr);
+        boardPtr = boardPtr->parent;
+    }
+}
+
+void A_Star_1::printBoardTrail() {
+    cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
+    cout << "-- Length of path: " << trailOfBoards.size() << endl;
+    cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;
+    cout << "-- Number of boards added to Closed List: " << closedListTotalAdds << endl << endl;
+
+    for (auto & board : trailOfBoards) {
+        board->printStateFancy();
+    }
+}
