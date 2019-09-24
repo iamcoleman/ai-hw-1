@@ -199,9 +199,9 @@ void BFS::createChildren(Board *board) {
 void BFS::setFunctionValues(Board *board, int tileNumber) {
     // set g_of_n (the cost of making a move) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
     if (tileNumber >= 10) {
-        board->g_of_n = 2;
+        board->g_of_n = board->parent->g_of_n + 2;
     } else if (tileNumber >= 1) {
-        board->g_of_n = 1;
+        board->g_of_n = board->parent->g_of_n + 1;
     } else {
         board->g_of_n = 0;
     }
@@ -220,11 +220,23 @@ void BFS::createBoardTrail(Board *board) {
 }
 
 void BFS::printBoardTrail() {
-    cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
-    cout << "-- Length of path: " << trailOfBoards.size() << endl;
-    cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;
-    cout << "-- Number of boards added to Closed List: " << closedListTotalAdds << endl << endl;
+    cout << "--- GOAL STATE FOUND ---" << endl << endl;
 
+    // Get search statistics
+    int tileMovementCost;
+    for (auto & board : trailOfBoards) {
+        tileMovementCost = board->g_of_n;
+    }
+
+    // Print search statistics
+    cout << "--- Search Statistics ---" << endl;
+    cout << "Length of path: " << trailOfBoards.size() << endl;
+    cout << "Number of boards added to Open List: " << openListTotalAdds << endl;
+    cout << "Number of boards added to Closed List: " << closedListTotalAdds << endl;
+    cout << "Total movement cost: " << tileMovementCost << endl << endl;
+
+    // Print Boards from Start -> Goal
+    cout << "--- Sequence of Boards ---" << endl;
     for (auto & board : trailOfBoards) {
         board->printStateFancy();
     }

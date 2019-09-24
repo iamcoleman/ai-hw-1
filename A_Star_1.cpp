@@ -16,7 +16,7 @@ int A_Star_1::closedListTotalAdds = 0;
 /*
  * Constructor
  */
-A_Star_1::A_Star_1()
+A_Star_1::A_Star_1(int heuristic)
 {
     /*
      * For canMove and moveBoard
@@ -39,6 +39,13 @@ A_Star_1::A_Star_1()
     moveBoard[1] = &A_Star_1::moveDown;
     moveBoard[2] = &A_Star_1::moveLeft;
     moveBoard[3] = &A_Star_1::moveRight;
+
+    // Set pointer to correct heuristic function
+    if (heuristic == 1) {
+        heuristicFn = &A_Star_1::getHeuristicScore1;
+    } else {
+        heuristicFn = &A_Star_1::getHeuristicScore2;
+    }
 }
 
 
@@ -135,24 +142,25 @@ void A_Star_1::aStarSearch(Board *board) {
             return;
         }
 
+        // make pointer to first node in queue and then pop it out of the queue
+        Board* currBoard = openList.front();
+        openList.pop_front();
+
         // check if board is goal state
-        if (openList.front()->isGoalState()) {
+        if (currBoard->isGoalState()) {
             // goal state found
             goalFound = true;
 
             // create string of boards that found the solution
-            createBoardTrail(openList.front());
+            createBoardTrail(currBoard);
             printBoardTrail();
         } else {
             // add first board in the queue to the closed list and increment total adds
-            closedList.push_back(openList.front());
+            closedList.push_back(currBoard);
             closedListTotalAdds++;
 
             // expand the first board in the queue
-            createChildren(openList.front());
-
-            // pop the first board in the queue
-            openList.pop_front();
+            createChildren(currBoard);
         }
     }
 }
@@ -203,7 +211,7 @@ void A_Star_1::setFunctionValues(Board *board, int tileNumber) {
     }
 
     // set h_of_n (heuristic score)
-    board->h_of_n = getHeuristicScore(board);
+    board->h_of_n = (this->*heuristicFn)(*board);
 
     // set f_of_n (path cost + heuristic score)
     board->f_of_n = board->g_of_n + board->h_of_n;
@@ -212,16 +220,61 @@ void A_Star_1::setFunctionValues(Board *board, int tileNumber) {
     board->priorityValue = 1;
 }
 
-int A_Star_1::getHeuristicScore(Board *board) {
+int A_Star_1::getHeuristicScore1(Board &board) {
     // Estimated cost of taking this board B to the goal state G is equal to the number of tiles in B
     // that are not in the correct location as required by G
     int score = 20;
     for (int i = 0; i < 20; ++i) {
-        if (board->state[i] == board->goalState[i]) {
+        if (board.state[i] == board.goalState[i]) {
             score--;
         }
     }
     return score;
+}
+
+int A_Star_1::getHeuristicScore2(Board &board) {
+    // Estimated cost of taking this board B to the goal state G is the sum of the smallest number of
+    // moves for each tile (that is not already at its final location) to reach its final location as
+    // required by G
+    int score = 0;
+    for (int i = 0; i < 20; ++i) {
+        if (board.state[i] != board.goalState[i]) {
+            // if tile is not in it's correct location, then calculate number of moves
+            score += getRowDifference(board.state[i], board) + getColumnDifference(board.state[i], board);
+        }
+    }
+
+    return score;
+}
+
+int A_Star_1::getRowDifference(int tile, Board &board) {
+    int pos1 = 0;  // position of current state tile
+    int pos2 = 0;  // position of goal state tile
+    for (int i = 0; i < 20; ++i) {
+        if (tile == board.state[i]) {
+            pos1 = i;
+        }
+        if (tile == board.goalState[i]) {
+            pos2 = i;
+        }
+    }
+
+    return abs((pos1 / 4) - (pos2 / 4));
+}
+
+int A_Star_1::getColumnDifference(int tile, Board &board) {
+    int pos1 = 0;  // position of current state tile
+    int pos2 = 0;  // position of goal state tile
+    for (int i = 0; i < 20; ++i) {
+        if (tile == board.state[i]) {
+            pos1 = i;
+        }
+        if (tile == board.goalState[i]) {
+            pos2 = i;
+        }
+    }
+
+    return abs((pos1 % 4) - (pos2 % 4));
 }
 
 void A_Star_1::insertBoardToPriorityQueue(Board *board) {
@@ -266,11 +319,23 @@ void A_Star_1::createBoardTrail(Board *board) {
 }
 
 void A_Star_1::printBoardTrail() {
-    cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
-    cout << "-- Length of path: " << trailOfBoards.size() << endl;
-    cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;
-    cout << "-- Number of boards added to Closed List: " << closedListTotalAdds << endl << endl;
+    cout << "--- GOAL STATE FOUND ---" << endl << endl;
 
+    // Get search statistics
+    int tileMovementCost;
+    for (auto & board : trailOfBoards) {
+        tileMovementCost = board->g_of_n;
+    }
+
+    // Print search statistics
+    cout << "--- Search Statistics ---" << endl;
+    cout << "Length of path: " << trailOfBoards.size() << endl;
+    cout << "Number of boards added to Open List: " << openListTotalAdds << endl;
+    cout << "Number of boards added to Closed List: " << closedListTotalAdds << endl;
+    cout << "Total movement cost: " << tileMovementCost << endl << endl;
+
+    // Print Boards from Start -> Goal
+    cout << "--- Sequence of Boards ---" << endl;
     for (auto & board : trailOfBoards) {
         board->printStateFancy();
     }

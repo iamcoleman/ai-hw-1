@@ -15,7 +15,7 @@
 class A_Star_1 {
 public:
     // Constructor
-    A_Star_1();
+    A_Star_1(int heuristic);
 
     // Data Members
     bool goalFound;
@@ -46,11 +46,18 @@ public:
     int moveLeft(Board &board);
     int moveRight(Board &board);
 
+    // Heuristic functions
+    typedef int (A_Star_1::*heuristicPtr)(Board &board);
+    heuristicPtr heuristicFn;
+    int getHeuristicScore1(Board &board);
+    int getHeuristicScore2(Board &board);
+    int getRowDifference(int tile, Board &board);
+    int getColumnDifference(int tile, Board &board);
+
     // A* functions
     void aStarSearch(Board *board);
     void createChildren(Board *board);
     void setFunctionValues(Board *board, int tileNumber = 0);
-    int getHeuristicScore(Board *board);
     void insertBoardToPriorityQueue(Board *board);
     void createBoardTrail(Board *board);
     void printBoardTrail();
