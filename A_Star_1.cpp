@@ -123,7 +123,7 @@ int A_Star_1::moveRight(Board &board) {
 void A_Star_1::aStarSearch(Board *board) {
     // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
-    setFunctionValues(board, 0);
+    setFunctionValues(board);
     openListTotalAdds++;
 
     // do while a goal state hasn't been found
@@ -134,8 +134,6 @@ void A_Star_1::aStarSearch(Board *board) {
             cout << "After 50,000 explored states, no goal state was found" << endl << endl;
             return;
         }
-
-        cout << "f(n): " << openList.front()->f_of_n << endl;
 
         // check if board is goal state
         if (openList.front()->isGoalState()) {

@@ -49,7 +49,7 @@ public:
     // A* functions
     void aStarSearch(Board *board);
     void createChildren(Board *board);
-    void setFunctionValues(Board *board, int tileNumber);
+    void setFunctionValues(Board *board, int tileNumber = 0);
     int getHeuristicScore(Board *board);
     void insertBoardToPriorityQueue(Board *board);
     void createBoardTrail(Board *board);

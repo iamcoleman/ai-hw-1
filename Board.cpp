@@ -77,11 +77,11 @@ bool operator!=(const Board &first, const Board &second) {
 
 void Board::printStateFancy() {
     // print Board ID
-    cout << "-- Board: " << id << endl;
+    cout << "-- Board ID: " << id << endl;
 
     // print parent Board ID
     if (parent) {
-        cout << "-- Parent Board: " << parent->id << endl;
+        cout << "-- Parent Board ID: " << parent->id << endl;
     }
 
     // print g(n) value
@@ -97,7 +97,14 @@ void Board::printStateFancy() {
     cout << "-- Priority Value = " << priorityValue << endl;
 
     // print state of Board
-    cout << "-- State for Board " << id << endl;
+    cout << "-- Board " << id << " state" << endl << "[";
+    for (int j = 0; j < 19; ++j) {
+        cout << state[j] << ", ";
+    }
+    cout << state[19] << "]" << endl;
+
+    // Board visualization
+    cout << "-- Board " << id << " visualization" << endl;
     for (int i = 0; i < 20; ++i) {
         if (state[i] < 10) {
             cout << state[i] << "   ";
