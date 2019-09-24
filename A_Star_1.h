@@ -1,9 +1,9 @@
 //
-// Created by Coleman on 9/17/2019.
+// Created by Coleman on 9/23/2019.
 //
 
-#ifndef AI_HW_1_BFS_H
-#define AI_HW_1_BFS_H
+#ifndef AI_HW_1_A_STAR_1_H
+#define AI_HW_1_A_STAR_1_H
 
 #include <queue>
 #include <vector>
@@ -11,10 +11,11 @@
 
 #include "Board.h"
 
-class BFS {
+
+class A_Star_1 {
 public:
     // Constructor
-    BFS();
+    A_Star_1(int heuristic);
 
     // Data Members
     bool goalFound;
@@ -29,7 +30,7 @@ public:
     bool isBoardInClosedList(Board *board);
 
     // Able to move tile functions
-    typedef bool (BFS::*canMovePtr)(const Board &board);
+    typedef bool (A_Star_1::*canMovePtr)(const Board &board);
     canMovePtr canMove[4];
     bool canMoveUp(const Board &board);
     bool canMoveDown(const Board &board);
@@ -37,7 +38,7 @@ public:
     bool canMoveRight(const Board &board);
 
     // Move tile functions
-    typedef int (BFS::*movePtr)(Board &board);
+    typedef int (A_Star_1::*movePtr)(Board &board);
     movePtr moveBoard[4];
     int moveTile(int pos0, int pos1, Board &board);
     int moveUp(Board &board);
@@ -45,14 +46,22 @@ public:
     int moveLeft(Board &board);
     int moveRight(Board &board);
 
-    // BFS Functions
-    void breadthFirstSearch(Board *board);
+    // Heuristic functions
+    typedef int (A_Star_1::*heuristicPtr)(Board &board);
+    heuristicPtr heuristicFn;
+    int getHeuristicScore1(Board &board);
+    int getHeuristicScore2(Board &board);
+    int getRowDifference(int tile, Board &board);
+    int getColumnDifference(int tile, Board &board);
+
+    // A* functions
+    void aStarSearch(Board *board);
     void createChildren(Board *board);
-    void setFunctionValues(Board *board, int tileNumber);
+    void setFunctionValues(Board *board, int tileNumber = 0);
+    void insertBoardToPriorityQueue(Board *board);
     void createBoardTrail(Board *board);
     void printBoardTrail();
-
 };
 
 
-#endif //AI_HW_1_BFS_H
+#endif //AI_HW_1_A_STAR_1_H

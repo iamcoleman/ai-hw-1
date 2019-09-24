@@ -2,7 +2,6 @@
 // Created by Coleman on 9/17/2019.
 //
 
-#include <queue>
 #include <vector>
 #include <iostream>
 
@@ -95,26 +94,29 @@ bool BFS::canMoveRight(const Board &board) {
  * Move tile functions
  */
 
-void BFS::moveTile(int pos0, int pos1, Board &board) {
-    int hold = board.state[pos0];
+int BFS::moveTile(int pos0, int pos1, Board &board) {
+    // pos0 = index of 0 (blank)
+    // pos1 = index of tile
+    int tileNumber = board.state[pos1];
     board.state[pos0] = board.state[pos1];
-    board.state[pos1] = hold;
+    board.state[pos1] = 0;
+    return tileNumber;
 }
 
-void BFS::moveUp(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
+int BFS::moveUp(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 4, board);
 }
 
-void BFS::moveDown(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
+int BFS::moveDown(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 4, board);
 }
 
-void BFS::moveLeft(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
+int BFS::moveLeft(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) - 1, board);
 }
 
-void BFS::moveRight(Board &board) {
-    moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
+int BFS::moveRight(Board &board) {
+    return moveTile(positionOfTile(0, board), positionOfTile(0, board) + 1, board);
 }
 
 
@@ -122,9 +124,10 @@ void BFS::moveRight(Board &board) {
  * BFS functions
  */
 
-void BFS::BreadthFirstSearch(Board *board) {
-    // add starting board to open list and increment total adds
+void BFS::breadthFirstSearch(Board *board) {
+    // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
+    setFunctionValues(board, 0);
     openListTotalAdds++;
 
     // do while goal state hasn't been found
@@ -142,15 +145,15 @@ void BFS::BreadthFirstSearch(Board *board) {
             goalFound = true;
 
             // create string of boards that found the solution
-            CreateBoardTrail(openList.front());
-            PrintBoardTrail();
+            createBoardTrail(openList.front());
+            printBoardTrail();
         } else {
             // add first board in the queue to the closed list and increment total adds
             closedList.push_back(openList.front());
             closedListTotalAdds++;
 
             // expand the first board in the queue
-            CreateChildren(openList.front());
+            createChildren(openList.front());
 
             // pop the first board in the queue
             openList.pop_front();
@@ -158,7 +161,7 @@ void BFS::BreadthFirstSearch(Board *board) {
     }
 }
 
-void BFS::CreateChildren(Board *board) {
+void BFS::createChildren(Board *board) {
     // check all four directions and create children boards
     for (int i = 0; i < 4; ++i) {
         if ((this->*canMove[i])(*board)) {
@@ -169,11 +172,14 @@ void BFS::CreateChildren(Board *board) {
                 // create the child (copy of parent)
                 board->child[i] = new Board(*board);
 
-                // move the tile
-                (this->*moveBoard[i])(*board->child[i]);
+                // move the tile and get the tile number that moved
+                int tileMoved = (this->*moveBoard[i])(*board->child[i]);
 
                 // set the parent
                 board->child[i]->parent = board;
+
+                // set function values
+                setFunctionValues(board->child[i], tileMoved);
 
                 // check if child is in closed list
                 if (isBoardInClosedList(board->child[i])) {
@@ -190,7 +196,22 @@ void BFS::CreateChildren(Board *board) {
     }
 }
 
-void BFS::CreateBoardTrail(Board *board) {
+void BFS::setFunctionValues(Board *board, int tileNumber) {
+    // set g_of_n (the cost of making a move) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
+    if (tileNumber >= 10) {
+        board->g_of_n = board->parent->g_of_n + 2;
+    } else if (tileNumber >= 1) {
+        board->g_of_n = board->parent->g_of_n + 1;
+    } else {
+        board->g_of_n = 0;
+    }
+
+    board->h_of_n = 0;
+    board->f_of_n = board->g_of_n + board->h_of_n;
+    board->priorityValue = 1;
+}
+
+void BFS::createBoardTrail(Board *board) {
     Board* boardPtr = board;
     while (boardPtr) {
         trailOfBoards.insert(trailOfBoards.begin(), boardPtr);
@@ -198,12 +219,24 @@ void BFS::CreateBoardTrail(Board *board) {
     }
 }
 
-void BFS::PrintBoardTrail() {
-    cout << "~*~*~ GOAL STATE FOUND ~*~*~" << endl << endl;
-    cout << "-- Length of path: " << trailOfBoards.size() << endl;
-    cout << "-- Number of boards added to Open List: " << openListTotalAdds << endl;
-    cout << "-- Number of boards added to Closed List: " << closedListTotalAdds << endl << endl;
+void BFS::printBoardTrail() {
+    cout << "--- GOAL STATE FOUND ---" << endl << endl;
 
+    // Get search statistics
+    int tileMovementCost;
+    for (auto & board : trailOfBoards) {
+        tileMovementCost = board->g_of_n;
+    }
+
+    // Print search statistics
+    cout << "--- Search Statistics ---" << endl;
+    cout << "Length of path: " << trailOfBoards.size() << endl;
+    cout << "Number of boards added to Open List: " << openListTotalAdds << endl;
+    cout << "Number of boards added to Closed List: " << closedListTotalAdds << endl;
+    cout << "Total movement cost: " << tileMovementCost << endl << endl;
+
+    // Print Boards from Start -> Goal
+    cout << "--- Sequence of Boards ---" << endl;
     for (auto & board : trailOfBoards) {
         board->printStateFancy();
     }

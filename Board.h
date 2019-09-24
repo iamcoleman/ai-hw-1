@@ -8,16 +8,16 @@
 
 class Board {
 public:
-    static int nextid;         // id of the next board
-    static int g_of_n;         // g(n) = path cost
-    static int h_of_n;         // h(n) = heuristic cost
-    static int f_of_n;         // f(n) = g(n) + h(n)
-    static int priorityValue;  // priority value
-    int id;                    // id of board
-    Board* parent;             // parent board
-    Board* child[4];           // children boards
-    int state[20];             // state of board
-    int goalState[20];         // goal state
+    static int nextid;  // id of the next board
+    int id;             // id of board
+    Board* parent;      // parent board
+    Board* child[4];    // children boards
+    int state[20];      // state of board
+    int goalState[20];  // goal state
+    int g_of_n;         // g(n) = the cost of making a move
+    int h_of_n;         // h(n) = heuristic cost
+    int f_of_n;         // f(n) = g(n) + h(n)
+    int priorityValue;  // priority value
 
     Board(const int s[20], const int g[20]);   // Constructor
     Board(const Board &other);                 // Copy Constructor

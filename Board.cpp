@@ -7,12 +7,8 @@
 
 using namespace std;
 
-// setting static members
+// set static nextid
 int Board::nextid = 1;
-int Board::g_of_n = 1;
-int Board::h_of_n = 0;
-int Board::f_of_n = 1;
-int Board::priorityValue = 1;
 
 // Parametrized Constructor
 Board::Board(const int *s, const int *g) {
@@ -81,35 +77,48 @@ bool operator!=(const Board &first, const Board &second) {
 
 void Board::printStateFancy() {
     // print Board ID
-    cout << "-- Board: " << id << endl;
+    cout << "Board ID: " << id << endl;
 
     // print parent Board ID
     if (parent) {
-        cout << "-- Parent Board: " << parent->id << endl;
+        cout << "Parent Board ID: " << parent->id << endl;
+    } else {
+        cout << "Parent Board ID: Start" << endl;
     }
 
     // print g(n) value
-    cout << "-- g(n) = " << g_of_n << endl;
+    cout << "g(n) = " << g_of_n << endl;
 
     // print h(n) value
-    cout << "-- h(n) = " << h_of_n << endl;
+    cout << "h(n) = " << h_of_n << endl;
 
     // print f(n) value
-    cout << "-- f(n) = " << f_of_n << endl;
+    cout << "f(n) = " << f_of_n << endl;
 
     // print priority value
-    cout << "-- Priority Value = " << priorityValue << endl;
+    cout << "Priority Value: " << priorityValue << endl;
 
     // print state of Board
-    cout << "-- State for Board " << id << endl;
+    cout << "State: [";
+    for (int j = 0; j < 19; ++j) {
+        cout << state[j] << ", ";
+    }
+    cout << state[19] << "]" << endl;
+
+    // Board visualization
+    cout << "Board Visualization:" << endl;
     for (int i = 0; i < 20; ++i) {
+        if (i % 4 == 0) {
+            cout << "  ";
+        }
+
         if (state[i] < 10) {
             cout << state[i] << "   ";
         } else {
             cout << state[i] << "  ";
         }
 
-        if (i == 3 || i == 7 || i == 11 || i == 15 || i == 19) {
+        if (i % 4 == 3) {
             cout << endl;
         }
     }
