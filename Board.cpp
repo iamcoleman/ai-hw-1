@@ -52,6 +52,7 @@ Board::Board(const Board &other) {
     }
 }
 
+
 /*
  * Operators
  */
@@ -94,9 +95,6 @@ void Board::printStateFancy() {
 
     // print f(n) value
     cout << "f(n) = " << f_of_n << endl;
-
-    // print priority value
-    cout << "Priority Value: " << priorityValue << endl;
 
     // print state of Board
     cout << "State: [";

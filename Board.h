@@ -17,7 +17,6 @@ public:
     int g_of_n;         // g(n) = the cost of making a move
     int h_of_n;         // h(n) = heuristic cost
     int f_of_n;         // f(n) = g(n) + h(n)
-    int priorityValue;  // priority value
 
     Board(const int s[20], const int g[20]);   // Constructor
     Board(const Board &other);                 // Copy Constructor

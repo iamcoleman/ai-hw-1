@@ -2,8 +2,8 @@
 // Created by Coleman on 9/23/2019.
 //
 
-#ifndef AI_HW_1_A_STAR_1_H
-#define AI_HW_1_A_STAR_1_H
+#ifndef AI_HW_1_A_STAR_H
+#define AI_HW_1_A_STAR_H
 
 #include <queue>
 #include <vector>
@@ -12,12 +12,13 @@
 #include "Board.h"
 
 
-class A_Star_1 {
+class A_Star {
 public:
     // Constructor
-    A_Star_1(int heuristic);
+    A_Star(int heuristic);
 
     // Data Members
+    Board* rootBoard;
     bool goalFound;
     std::list<Board*> openList;
     static int openListTotalAdds;
@@ -30,7 +31,7 @@ public:
     bool isBoardInClosedList(Board *board);
 
     // Able to move tile functions
-    typedef bool (A_Star_1::*canMovePtr)(const Board &board);
+    typedef bool (A_Star::*canMovePtr)(const Board &board);
     canMovePtr canMove[4];
     bool canMoveUp(const Board &board);
     bool canMoveDown(const Board &board);
@@ -38,7 +39,7 @@ public:
     bool canMoveRight(const Board &board);
 
     // Move tile functions
-    typedef int (A_Star_1::*movePtr)(Board &board);
+    typedef int (A_Star::*movePtr)(Board &board);
     movePtr moveBoard[4];
     int moveTile(int pos0, int pos1, Board &board);
     int moveUp(Board &board);
@@ -47,7 +48,7 @@ public:
     int moveRight(Board &board);
 
     // Heuristic functions
-    typedef int (A_Star_1::*heuristicPtr)(Board &board);
+    typedef int (A_Star::*heuristicPtr)(Board &board);
     heuristicPtr heuristicFn;
     int getHeuristicScore1(Board &board);
     int getHeuristicScore2(Board &board);
@@ -61,7 +62,11 @@ public:
     void insertBoardToPriorityQueue(Board *board);
     void createBoardTrail(Board *board);
     void printBoardTrail();
+
+    // clean up
+    void clearBoards();
+    void clearBoards(Board* &root);
 };
 
 
-#endif //AI_HW_1_A_STAR_1_H
+#endif //AI_HW_1_A_STAR_H

@@ -17,6 +17,7 @@ public:
     BFS();
 
     // Data Members
+    Board* rootBoard;
     bool goalFound;
     std::list<Board*> openList;
     static int openListTotalAdds;
@@ -52,6 +53,9 @@ public:
     void createBoardTrail(Board *board);
     void printBoardTrail();
 
+    // clean up
+    void clearBoards();
+    void clearBoards(Board* &root);
 };
 
 

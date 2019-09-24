@@ -125,6 +125,9 @@ int BFS::moveRight(Board &board) {
  */
 
 void BFS::breadthFirstSearch(Board *board) {
+    // save root board for cleanup
+    rootBoard = board;
+
     // add starting board to open list, set initial function values, and increment total adds
     openList.push_back(board);
     setFunctionValues(board, 0);
@@ -136,27 +139,37 @@ void BFS::breadthFirstSearch(Board *board) {
         if (closedListTotalAdds >= 50000) {
             cout << "Terminating Search" << endl;
             cout << "After 50,000 explored states, no goal state was found" << endl;
+
+            // clean up
+            clearBoards();
+
             return;
         }
 
+        // make pointer to first board in queue, then pop it out of the queue
+        Board* currBoard = openList.front();
+        openList.pop_front();
+
         // check if board is goal state
-        if (openList.front()->isGoalState()) {
+        if (currBoard->isGoalState()) {
             // goal state found
             goalFound = true;
 
             // create string of boards that found the solution
-            createBoardTrail(openList.front());
+            createBoardTrail(currBoard);
             printBoardTrail();
+
+            // clean up
+            clearBoards();
+
+            return;
         } else {
             // add first board in the queue to the closed list and increment total adds
-            closedList.push_back(openList.front());
+            closedList.push_back(currBoard);
             closedListTotalAdds++;
 
             // expand the first board in the queue
-            createChildren(openList.front());
-
-            // pop the first board in the queue
-            openList.pop_front();
+            createChildren(currBoard);
         }
     }
 }
@@ -206,9 +219,11 @@ void BFS::setFunctionValues(Board *board, int tileNumber) {
         board->g_of_n = 0;
     }
 
+    // no heuristic function for BFS
     board->h_of_n = 0;
+
+    // f(n) = g(n) + h(n)
     board->f_of_n = board->g_of_n + board->h_of_n;
-    board->priorityValue = 1;
 }
 
 void BFS::createBoardTrail(Board *board) {
@@ -223,14 +238,14 @@ void BFS::printBoardTrail() {
     cout << "--- GOAL STATE FOUND ---" << endl << endl;
 
     // Get search statistics
-    int tileMovementCost;
+    int tileMovementCost = 0;
     for (auto & board : trailOfBoards) {
         tileMovementCost = board->g_of_n;
     }
 
     // Print search statistics
     cout << "--- Search Statistics ---" << endl;
-    cout << "Length of path: " << trailOfBoards.size() << endl;
+    cout << "Length of path: " << trailOfBoards.size() - 1 << endl;
     cout << "Number of boards added to Open List: " << openListTotalAdds << endl;
     cout << "Number of boards added to Closed List: " << closedListTotalAdds << endl;
     cout << "Total movement cost: " << tileMovementCost << endl << endl;
@@ -239,5 +254,31 @@ void BFS::printBoardTrail() {
     cout << "--- Sequence of Boards ---" << endl;
     for (auto & board : trailOfBoards) {
         board->printStateFancy();
+    }
+}
+
+
+/*
+ * Clean Up
+ */
+
+void BFS::clearBoards() {
+    for (int i = 0; i < 4; ++i) {
+        clearBoards(rootBoard->child[i]);
+    }
+}
+
+void BFS::clearBoards(Board* &root) {
+    // recursively delete every board in the tree
+    if (root) {
+        for (int i = 0; i < 4; ++i) {
+            clearBoards(root->child[i]);
+            if (root->child[i]) {
+                delete root->child[i];
+            }
+            root->child[i] = nullptr;
+        }
+        delete root;
+        root = nullptr;
     }
 }
