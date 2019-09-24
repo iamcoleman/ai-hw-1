@@ -135,6 +135,8 @@ void A_Star_1::aStarSearch(Board *board) {
             return;
         }
 
+        cout << "f(n): " << openList.front()->f_of_n << endl;
+
         // check if board is goal state
         if (openList.front()->isGoalState()) {
             // goal state found
@@ -195,9 +197,9 @@ void A_Star_1::createChildren(Board *board) {
 void A_Star_1::setFunctionValues(Board *board, int tileNumber) {
     // set g_of_n (the cost of making a move) equal to 1 if tile# is 1-9 or 2 if tile# is 10-19
     if (tileNumber >= 10) {
-        board->g_of_n = 2;
+        board->g_of_n = board->parent->g_of_n + 2;
     } else if (tileNumber >= 1) {
-        board->g_of_n = 1;
+        board->g_of_n = board->parent->g_of_n + 1;
     } else {
         board->g_of_n = 0;
     }
@@ -213,7 +215,6 @@ void A_Star_1::setFunctionValues(Board *board, int tileNumber) {
 }
 
 int A_Star_1::getHeuristicScore(Board *board) {
-    cout << "get heuristic score" << endl;
     // Estimated cost of taking this board B to the goal state G is equal to the number of tiles in B
     // that are not in the correct location as required by G
     int score = 20;
@@ -226,24 +227,35 @@ int A_Star_1::getHeuristicScore(Board *board) {
 }
 
 void A_Star_1::insertBoardToPriorityQueue(Board *board) {
-    cout << "Insert board into priority queue" << endl;
     list<Board*>::iterator boardInList;
 
     // check if state already exists in open list
     for (boardInList = openList.begin(); boardInList != openList.end(); boardInList++) {
-        (**boardInList).printStateFancy();
-        if ((**boardInList) == (*board)) {
-            // replace accordingly
-            cout << "Board exists in open list" << endl;
+        if ((**boardInList) == (*board) && (*board).f_of_n < (**boardInList).f_of_n) {
+            // replace the board in the open list with the new board that has a lower score, and end insertion function
+            (*boardInList) = board;
+            return;
+        } else if ((**boardInList) == (*board)) {
+            // add board to closed list, increment closed list count, and end insertion function
+            closedList.push_back(board);
+            closedListTotalAdds++;
+            return;
         }
     }
 
     // insert board into list based on f_of_n
+    bool wasInserted = false;
     for (boardInList = openList.begin(); boardInList != openList.end(); boardInList++) {
         if ((*board).f_of_n < (**boardInList).f_of_n) {
             openList.insert(boardInList, board);
+            wasInserted = true;
             break;
         }
+    }
+
+    // if board was not inserted, add to end of open list
+    if (!wasInserted) {
+        openList.push_back(board);
     }
 }
 
