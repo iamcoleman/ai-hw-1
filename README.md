@@ -2,7 +2,7 @@
 
 The goal of this assignment was to develop a program that implements Breadth First Search and A* Search with two different heuristics for solving a 19-tile puzzle (8-Puzzle).
 
-The search-based solution had to follow the strategy of using a priority queue for the Open List and another data structure for the closed list.
+The search-based solution had to follow the strategy of using a priority queue for the Open List and another data structure for the Closed List.
 
 ### Files
 
