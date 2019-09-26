@@ -9,9 +9,6 @@
 
 using namespace std;
 
-// static ints
-int A_Star::openListTotalAdds = 0;
-int A_Star::closedListTotalAdds = 0;
 
 /*
  * Constructor
@@ -27,6 +24,8 @@ A_Star::A_Star(int heuristic)
      */
 
     goalFound = false;
+    openListTotalAdds = 0;
+    closedListTotalAdds = 0;
 
     // Pointers to can move functions
     canMove[0] = &A_Star::canMoveUp;
@@ -138,10 +137,10 @@ void A_Star::aStarSearch(Board *board) {
 
     // do while a goal state hasn't been found
     while (!goalFound) {
-        // terminate search after 50,000 states have been explored and no solution has been found
-        if (closedListTotalAdds >= 50000) {
+        // terminate search after 25,000 states have been explored and no solution has been found
+        if (closedListTotalAdds >= 25000) {
             cout << "Terminating Search" << endl;
-            cout << "After 50,000 explored states, no goal state was found" << endl << endl;
+            cout << "After 25,000 explored states, no goal state was found" << endl << endl;
 
             // clean up
             clearBoards();

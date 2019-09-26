@@ -20,9 +20,9 @@ public:
     Board* rootBoard;
     bool goalFound;
     std::list<Board*> openList;
-    static int openListTotalAdds;
+    int openListTotalAdds;
     std::vector<Board*> closedList;
-    static int closedListTotalAdds;
+    int closedListTotalAdds;
     std::vector<Board*> trailOfBoards;
 
     // General Functions

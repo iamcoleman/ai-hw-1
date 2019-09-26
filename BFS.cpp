@@ -9,9 +9,6 @@
 
 using namespace std;
 
-// static ints
-int BFS::openListTotalAdds = 0;
-int BFS::closedListTotalAdds = 0;
 
 /*
  * Constructor
@@ -28,6 +25,8 @@ BFS::BFS()
      */
 
     goalFound = false;
+    openListTotalAdds = 0;
+    closedListTotalAdds = 0;
 
     // Pointers to can move functions
     canMove[0] = &BFS::canMoveUp;
@@ -135,10 +134,10 @@ void BFS::breadthFirstSearch(Board *board) {
 
     // do while goal state hasn't been found
     while (!goalFound) {
-        // terminate search after 50,000 states have been explored and no solution has been found
-        if (closedListTotalAdds >= 50000) {
+        // terminate search after 25,000 states have been explored and no solution has been found
+        if (closedListTotalAdds >= 25000) {
             cout << "Terminating Search" << endl;
-            cout << "After 50,000 explored states, no goal state was found" << endl;
+            cout << "After 25,000 explored states, no goal state was found" << endl << endl;
 
             // clean up
             clearBoards();
