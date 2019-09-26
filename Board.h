@@ -7,17 +7,27 @@
 
 
 class Board {
-
 public:
-    int id;
-    int parent;
-    int state[20];
-    int g_of_n;
-    int h_of_n;
-    int f_of_n;
+    static int nextid;  // id of the next board
+    int id;             // id of board
+    Board* parent;      // parent board
+    Board* child[4];    // children boards
+    int state[20];      // state of board
+    int goalState[20];  // goal state
+    int g_of_n;         // g(n) = the cost of making a move
+    int h_of_n;         // h(n) = heuristic cost
+    int f_of_n;         // f(n) = g(n) + h(n)
 
-    explicit Board(int s[20]);
-    void printStateFancy();
+    Board(const int s[20], const int g[20]);   // Constructor
+    Board(const Board &other);                 // Copy Constructor
+    void printStateFancy();                    // print the current state ~fancy~
+
+    // Operators
+    friend bool operator ==(const Board& first, const Board& second);
+    friend bool operator !=(const Board& first, const Board& second);
+
+    // Computations
+    bool isGoalState();
 };
 
 
